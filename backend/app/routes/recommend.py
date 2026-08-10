@@ -20,6 +20,7 @@ def content_recommendation(movie_name: str):
 def collaborative_recommendation(movie_name: str):
     # Temporary: return the same recommendations
     # Later you can replace this with a true collaborative model.
+    
     return recommend_movies(movie_name)
 
 @router.get("/personalized/{user_id}")
