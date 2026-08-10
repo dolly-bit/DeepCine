@@ -2,31 +2,19 @@ import { Sparkles, Search, LogOut } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import SearchModal from "../SearchModal";
+import {getAuthState, clearAuthState,} from "../../services/auth"
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const token = localStorage.getItem("access_token");
-  const userId = localStorage.getItem("user_id");
-  const isAuthenticated = Boolean(token && userId);
+  const {accesstoken, userId}=getAuthState();
+  const isAuthenticated = Boolean(accesstoken) && Boolean(userId) && userId!=="undefined";
   const isLanding = location.pathname === "/";
 
-  useEffect(() => {
-    if (!isAuthenticated && (token || userId)) {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user_id");
-      localStorage.removeItem("username");
-    }
-  }, [isAuthenticated, token, userId]);
-
   const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("username");
+    clearAuthState();
     navigate("/");
   };
 

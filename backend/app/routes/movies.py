@@ -1,5 +1,7 @@
 import datetime
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException,Depends
+from sqlalchemy.orm import Session
+from app.database.connection import get_db
 from app.services.tmdb.movies import (
     get_trending_movies,
     get_top_rated_movies,
@@ -7,6 +9,7 @@ from app.services.tmdb.movies import (
     search_movies,
 )
 from app.services.tmdb.details import tmdb_get
+from app.services.ai_recommendation_services import get_personalized_recommendations
 
 router = APIRouter(prefix="/movies", tags=["Movies"])
 
@@ -200,5 +203,25 @@ async def get_similar_movies(movie_id: int):
         raise HTTPException(status_code=500, detail=str(e))        
 
 @router.get("/recommended/{user_id}")
-def recommended_movies(user_id: int):
-    return get_collaborative_recommendations(user_id)
+def recommended_movies(
+    user_id: int,
+    db: Session = Depends(get_db),
+):
+    movies = get_personalized_recommendations(user_id, db)
+
+    return [
+        {
+            "id": movie.tmdb_id,
+            "tmdb_id": movie.tmdb_id,
+            "title": movie.title,
+            "poster_url": (
+                                f"https://image.tmdb.org/t/p/w500{movie['poster_path']}"
+                                if movie.get("poster_path")
+                                else None
+                            ),
+            "overview": movie.overview,
+            "vote_average": movie.vote_average or 0,
+            "release_date": movie.release_date,
+        }
+        for movie in movies
+    ]

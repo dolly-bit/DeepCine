@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Film, Sparkles, Play, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import api from "../services/api";
+import { setAuthState } from "../services/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -35,10 +36,11 @@ export default function Login() {
     try {
       const res = await api.post("/auth/login", form);
 
-      localStorage.setItem("access_token", res.data.access_token);
-      localStorage.setItem("token", res.data.access_token);
-      localStorage.setItem("user_id", res.data.user_id);
-      localStorage.setItem("username", res.data.username);
+      setAuthState({
+        accessToken: res.data.access_token,
+        userId: res.data.user_id,
+        username: res.data.username,
+      });
 
       resetForm();
       navigate("/home");

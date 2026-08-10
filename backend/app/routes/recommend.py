@@ -36,13 +36,15 @@ def personalized_recommendations(
     return [
         {
             "id": movie.tmdb_id,
+            "tmdb_id": movie.tmdb_id,
             "title": movie.title,
             "poster_url": (
                 f"https://image.tmdb.org/t/p/w500{movie.poster_path}"
                 if movie.poster_path
                 else None
             ),
-            "vote_average": movie.vote_average,
+            "overview":movie.overview,
+            "vote_average": movie.vote_average or 0,
             "release_date": movie.release_date,
         }
         for movie in movies

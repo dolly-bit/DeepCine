@@ -22,9 +22,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "https://deepcine.onrender.com",
-        "https://deep-cine.vercel.app"
+        "*"
     ],
     allow_credentials=True,
     allow_methods=["*"],

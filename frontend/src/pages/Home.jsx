@@ -4,6 +4,7 @@ import Navbar from "../components/layout/Navbar";
 import DashboardHero from "../components/home/DashboardHero";
 import MovieSlider from "../components/home/MovieSlider";
 import RecommendedSection from "../components/RecommendationSection";
+import PersonalizedMovies from "../components/PersonalizedMovies";
 
 import {
   getTrendingMovies,
@@ -62,7 +63,7 @@ export default function Home() {
 
       <DashboardHero movies={trending} />
 
-      <RecommendedSection />
+      <PersonalizedMovies />
 
       <div id="trending">
         <MovieSlider

@@ -48,7 +48,7 @@ export const searchMovies = async (query) => {
 // AI Recommendations
 export const getRecommendations = async (movieName) => {
   const res = await api.get(
-    `/recommend?movie_name=${encodeURIComponent(movieName)}`
+    `/recommend/content?movie_name=${encodeURIComponent(movieName)}`
   );
   return (res.data || []).map(normalizeMovie);
 };
@@ -114,6 +114,6 @@ export const saveSearchHistory = async (userId, query) => {
 
 // Personalized AI Recommendations
 export const getPersonalizedRecommendations = async (userId) => {
-  const res = await api.get(`/recommend/personalized/${userId}`);
+  const res = await api.get(`/recommended/personalized/${userId}`);
   return (res.data || []).map(normalizeMovie);
 };

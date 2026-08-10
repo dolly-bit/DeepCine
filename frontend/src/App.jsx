@@ -11,11 +11,10 @@ import Landing from "./pages/Landing"
 import MovieDetails from "./pages/MovieDetails";
 import SearchPage  from "./pages/Search";
 import MoviesListPage from "./pages/MoviesListPage";
+import { isAuthenticated } from "./services/auth";
 
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("access_token");
-
-  return token ? children : <Navigate to="/login" replace />;
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {
