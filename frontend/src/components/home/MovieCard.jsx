@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function MovieCard({ movie }) {
   const navigate = useNavigate();
+  const isComingSoon = movie.release_date && new Date(movie.release_date) > new Date();
 
   return (
     <div className="group/card relative w-full max-w-[240px] flex-shrink-0 transition-all duration-300 hover:z-50">
@@ -23,8 +24,10 @@ export default function MovieCard({ movie }) {
             </span>
           </div>
           <div className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-200 backdrop-blur">
-            {movie.release_date ? new Date(movie.release_date).getFullYear() : "Soon"}
-          </div>
+  {movie.release_date
+    ? new Date(movie.release_date).getFullYear()
+    : "N/A"}
+</div>
         </div>
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-0 transition-all duration-300 group-hover/card:opacity-100">
