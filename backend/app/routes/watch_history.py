@@ -27,3 +27,28 @@ def add_watch_history(
     return {
         "message": "Watch history saved"
     }
+
+
+@router.get("/stats")
+def get_watch_history_stats(
+    db: Session = Depends(get_db)
+):
+    total_records = db.query(WatchHistory).count()
+
+    unique_users = (
+        db.query(WatchHistory.user_id)
+        .distinct()
+        .count()
+    )
+
+    unique_movies = (
+        db.query(WatchHistory.tmdb_id)
+        .distinct()
+        .count()
+    )
+
+    return {
+        "total_watch_history_records": total_records,
+        "unique_users": unique_users,
+        "unique_movies": unique_movies,
+    }
