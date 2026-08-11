@@ -4,11 +4,13 @@ venv/
 env/
 backend/.venv/
 backend/venv/
+
 __pycache__/
 **/__pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.pkl
 *.egg-info/
 .pytest_cache/
 .mypy_cache/
@@ -25,7 +27,6 @@ ai/faiss_index/
 ai/embeddings/
 *.npy
 *.npz
-*.pkl
 *.pt
 *.pth
 *.faiss

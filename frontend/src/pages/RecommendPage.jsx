@@ -12,24 +12,27 @@ import {
   getUpcomingMovies,
   getRecommendations,
   getCollaborativeRecommendations,
+  getPersonalizedRecommendations,
 } from "../services/movies";
 
 export default function RecommendPage({ username = "Guest" }) {
   const location = useLocation();
   const movieName = location.state?.search || "Avengers";
+  const userId = localStorage.getItem("user_id");
 
   const [recommended, setRecommended] = useState([]);
+  const [personalized, setPersonalized] = useState([]);
   const [collaborative, setCollaborative] = useState([]);
   const [trending, setTrending] = useState([]);
   const [topRated, setTopRated] = useState([]);
-  const [upcoming, setUpcoming] = useState([]);
+  const [upcoming, setUpcoming] = useState([]); 
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    loadMovies();
-  }, [movieName]);
+  loadMovies();
+}, [movieName, userId]);
 
   const filterFutureMovies = (movies) => {
     const today = new Date().toISOString().slice(0, 10);
@@ -44,24 +47,27 @@ export default function RecommendPage({ username = "Guest" }) {
       setError("");
 
       const [
-        recommend,
-        collaborativeMovies,
-        trendingMovies,
-        topRatedMovies,
-        upcomingMovies,
-      ] = await Promise.all([
-        getRecommendations(movieName),
-        getCollaborativeRecommendations(movieName),
-        getTrendingMovies(),
-        getTopRatedMovies(),
-        getUpcomingMovies(),
-      ]);
+  recommend,
+  personalizedMovies,
+  collaborativeMovies,
+  trendingMovies,
+  topRatedMovies,
+  upcomingMovies,
+] = await Promise.all([
+  getRecommendations(movieName),
+  getPersonalizedRecommendations(userId),
+  getCollaborativeRecommendations(userId),
+  getTrendingMovies(),
+  getTopRatedMovies(),
+  getUpcomingMovies(),
+]);
 
       setRecommended(recommend || []);
-      setCollaborative(collaborativeMovies || []);
-      setTrending(trendingMovies || []);
-      setTopRated(topRatedMovies || []);
-      setUpcoming(filterFutureMovies(upcomingMovies || []));
+setPersonalized(personalizedMovies || []);
+setCollaborative(collaborativeMovies || []);
+setTrending(trendingMovies || []);
+setTopRated(topRatedMovies || []);
+setUpcoming(filterFutureMovies(upcomingMovies || []));
     } catch (err) {
       console.error(err);
       setError("Failed to load movies.");
@@ -95,16 +101,22 @@ export default function RecommendPage({ username = "Guest" }) {
       <FilterBar username={username} />
 
       <MovieRow
-        title="Recommended For You"
-        subtitle="Based on your search"
-        movies={recommended}
-      />
-
+  title="Recommended For You"
+  subtitle="Personalized for your taste"
+  movies={personalized}
+/>
       <MovieRow
-        title="Collaborative Filtering"
-        subtitle="Users with similar taste"
+     title="Because You Searched"
+    subtitle={`Movies similar to ${movieName}`}
+    movies={recommended}
+/>
+     {collaborative.length > 0 && (
+       <MovieRow
+        title="Because Viewers Like You Watched These"
+        subtitle="Based on similar users' watch patterns"
         movies={collaborative}
-      />
+  />
+)}
 
       <MovieRow
         title="Trending Movies"

@@ -62,11 +62,19 @@ export const getContentRecommendations = async (movieName) => {
 };
 
 // Collaborative Filtering
-export const getCollaborativeRecommendations = async (movieName) => {
-  const res = await api.get(
-    `/recommend/collaborative?movie_name=${encodeURIComponent(movieName)}`
-  );
-  return (res.data || []).map(normalizeMovie);
+export const getCollaborativeRecommendations = async (userId) => {
+  if (!userId) return [];
+
+  try {
+    const res = await api.get(
+      `/recommend/collaborative/${userId}`
+    );
+
+    return (res.data || []).map(normalizeMovie);
+  } catch (err) {
+    console.error("Collaborative recommendation error:", err);
+    return [];
+  }
 };
 
 export const getMovieDetails = async (id) => {
@@ -114,6 +122,11 @@ export const saveSearchHistory = async (userId, query) => {
 
 // Personalized AI Recommendations
 export const getPersonalizedRecommendations = async (userId) => {
-  const res = await api.get(`/recommended/personalized/${userId}`);
+  if (!userId) return [];
+
+  const res = await api.get(
+    `/recommend/personalized/${userId}`
+  );
+
   return (res.data || []).map(normalizeMovie);
 };

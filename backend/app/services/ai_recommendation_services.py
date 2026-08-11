@@ -7,9 +7,37 @@ from app.models import (
     Movie,
     MovieGenre,
 )
+from ai import collaborative
 
 
 def get_personalized_recommendations(user_id: int, db: Session):
+    """
+    Hybrid personalization pipeline, tried in order:
+
+      1. Collaborative filtering (ALS matrix factorization on watch-history
+         interactions across ALL users) - the strongest signal once a user
+         has enough history, because it captures "people like you also
+         watched..." patterns that content/genre features can't see.
+
+      2. Genre-affinity heuristic - a lighter-weight fallback for users the
+         CF model hasn't learned about yet (e.g. trained before they signed
+         up, or too few interactions to be reliable).
+
+      3. Global popularity - cold-start fallback for brand-new users with
+         no history at all.
+    """
+
+    # --------------------------------------------------
+    # 0. Try genuine collaborative filtering first
+    # --------------------------------------------------
+
+    cf_recommendations = collaborative.recommend_for_user(
+        user_id,
+        top_k=20,
+    )
+
+    if cf_recommendations:
+        return cf_recommendations
 
     # --------------------------------------------------
     # 1. Get user's watch history
